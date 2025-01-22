@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .  # This refers to the root directory where your React app and Dockerfile are located
+    ports:
+      - "80:80"  # Expose the frontend on port 80
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend  # Pointing to your backend folder
+    ports:
+      - "5000:5000"  # Expose backend on port 5000
+    environment:
+      - DATABASE_URL=postgresql://postgres:root@db:5432/addition
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: addition
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+    driver: local
